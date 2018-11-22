@@ -1,28 +1,36 @@
 package main;
 
 public class Interpreteter {
-	//private final Character SILENCIO = ' ';
-	private final Character EXCLAMACAO = '!';
-	private final Character INTERROGACAO = '?';
-	private final Character NEW_LINE = '\n';
-	private final Character SEMICOLON = ';';
-	private final Character COMMA = ',';
-	//private final int SUCESS = 0;
-	//private final int ERROR = -1;
+
+	private final Character EXCLAMACAO = '!'; //Trocar instrumento para o instrumento General MIDI #7 (Harpsichord) 
+	private final Character INTERROGACAO = '?';//Aumenta UMA oitava; Se não puder, aumentar, volta à oitava default (de início)
+	private final Character NEW_LINE = '\n';//Trocar instrumento para o instrumento General MIDI #15 (Tubular Bells) 
+	private final Character SEMICOLON = ';'; //Trocar instrumento para o instrumento General MIDI #76 (Pan Flute) 
+	private final Character COMMA = ','; //Trocar instrumento para o instrumento General MIDI #20 (Church Organ)
+	private final Character SPACE = ' ';//Aumenta volume para o DOBRO do volume 
 	
-	private Character charFromFile;
+	private Character currentChar;
 	private Character previousChar;
-	//private MakeMusic music = new MakeMusic();
-	private String lastRepresentation;
-	private String noteRepresentation;
 	
-	public Character getCharFromFile() {
-		return charFromFile;
+	private String ConvertedText;
+	private String textToConvert;
+	
+	private Translator translator = new Translator();
+	
+	
+	Interpreteter (String textToConvert){
+		this.ConvertedText = translator.getNoteRepresentation();
+		this.textToConvert = textToConvert;
+		this.previousChar = ' ';
+	}
+	
+	public Character getCurrentChar() {
+		return currentChar;
 	}
 
-	public void setCharFromFile(Character charFromFile) {
-		this.setPreviousChar(this.charFromFile);
-		this.charFromFile = charFromFile;
+	public void setCurrentChar(Character charToTranslate) {
+		this.setPreviousChar(this.currentChar);
+		this.currentChar = charToTranslate;
 	}
 	
 	
@@ -33,74 +41,86 @@ public class Interpreteter {
 	public void setPreviousChar(Character previousChar) {
 		this.previousChar = previousChar;
 	}
-
+/*Interpretador*/
 	public String Interpreter() {
-		Character charFromFile = this.charFromFile;
-		if(isNote(charFromFile)) {
-			//noteRepresentation = music.charToNote(charFromFile);
-			setLastRepresentation(noteRepresentation);
-			return noteRepresentation;
-		}
-		if(Character.isDigit(charFromFile)) {
-			if(isPar(charFromFile)) {
-				//TODO: aumenta UMA oitava
-				//noteRepresentation = music.IncreaseOctave();
-				setLastRepresentation(noteRepresentation);
-				return noteRepresentation;
+		for(int i = 0; i < textToConvert.length(); i++) {
+			
+			setCurrentChar(textToConvert.charAt(i));
+			
+			if(isNote(this.currentChar)) {
+				ConvertedText += translator.charToNote(this.currentChar);
+				setPreviousChar(this.currentChar);
 			}
-			else {
-				//TODO: diminui UMA oitava
-				//noteRepresentation = music.DecreaseOctave();
-				setLastRepresentation(noteRepresentation);
-				return noteRepresentation;
+			
+			if(Character.isDigit(this.currentChar)) {
+				//TODO: Trocar instrumento para o instrumento General MIDI cujo numero é igual ao valor do instrumento ATUAL + valor do dígito
+			}
+			
+			if(isOtherVowel(this.currentChar)) {
+				//TODO: Aumenta o volume em 10%
+				//noteRepresentation = music.DecreaseVolumeByHalf();
+				//setLastRepresentation(ConvertedText);
+			}
+			
+			if(isOtherConsonant(this.currentChar)) {
+				/*TODO: Se caractere anterior era
+				* NOTA (A a G), repete nota;
+				* Caso contrário, silêncio ou
+				* pausa
+				*/
+				if(prevIsNote()) {
+					//setLastRepresentation(ConvertedText);
+				}
+				else {
+					//noteRepresentation = music.Silence();
+				//	setLastRepresentation(ConvertedText);
+				}
+			}
+			
+			if(this.currentChar == EXCLAMACAO) {
+				//TODO: Trocar instrumento para o instrumento General MIDI #7 (Harpsichord) 
+			}
+			
+			if(this.currentChar == INTERROGACAO) {
+				//TODO: Aumenta UMA oitava; Se não puder, aumentar, volta à oitava default (de início)
+			}
+			
+			if(this.currentChar == NEW_LINE) {
+				//TODO: Trocar instrumento para o instrumento General MIDI #15 (Tubular Bells) 
+			}
+			
+			if(this.currentChar == SEMICOLON) {
+				//TODO: Trocar instrumento para o instrumento General MIDI #76 (Pan Flute) 
+			}
+			
+			if(this.currentChar == COMMA) {
+				//TODO: Trocar instrumento para o instrumento General MIDI #20 (Church Organ)
+			}
+			
+			if(this.currentChar == SPACE) {
+				//TODO: Aumenta volume para o DOBRO do volume 
+			}
+			
+			//caracter desconhecido
+			else{
+				/*TODO: Se caractere anterior era
+				* NOTA (A a G), repete nota;
+				* Caso contrário, silêncio ou
+				* pausa
+				*/
+				if(prevIsNote()) {
+				//	setLastRepresentation(ConvertedText);
+				}
+				else {
+					//noteRepresentation = music.Silence();
+					//setLastRepresentation(ConvertedText);
+				}
 			}
 		}
-		if(isOtherVowel(charFromFile)) {
-			//TODO: Diminui o volume pela metade
-			//noteRepresentation = music.DecreaseVolumeByHalf();
-			setLastRepresentation(noteRepresentation);
-			return noteRepresentation;
-		}
-		if(isOtherConsonant(charFromFile)) {
-			/*TODO: Se caractere anterior era
-			* NOTA (A a G), repete nota;
-			* Caso contrário, silêncio ou
-			* pausa
-			*/
-			if(prevIsNote()) {
-				setLastRepresentation(noteRepresentation);
-				return noteRepresentation;
-			}
-			else {
-				//noteRepresentation = music.Silence();
-				setLastRepresentation(noteRepresentation);
-				return noteRepresentation;
-			}
-		}
-		if(charFromFile == EXCLAMACAO) {
-			//TODO: Aumenta o volume para o dobro
-			return "SUCESS";
-		}
-		if(charFromFile == INTERROGACAO) {
-			//TODO: Volta a oitava default
-			return "SUCESS";
-		}
-		if(charFromFile == NEW_LINE) {
-			//TODO: Trocar o instrumento
-			return "SUCESS";
-		}
-		if(charFromFile == SEMICOLON) {
-			//TODO: aumenta BPM em 50
-			return "SUCESS";
-		}
-		if(charFromFile == COMMA) {
-			//TODO: diminui BPM em 50
-			return "SUCESS";
-		}
-		//caracter desconhecido
-		return "ERROR";
+		return ConvertedText;
 	}
 	
+	//só é nota se for maiuscula
 	private boolean isNote(Character c) {
 		switch(c) {
 		case 'A':
@@ -110,32 +130,15 @@ public class Interpreteter {
 		case 'E':
 		case 'F':
 		case 'G':
-		case ' ':
 			return true;
 		default:
 			return false;
 			
 		}
 	}
-	
-	private boolean isPar(Character c){
-	   int dig = c;
-	   if(isPar(dig)) {
-		   return true;
-	   }
-	   else
-		   return false;
-	}
-	
-	private boolean isPar(int dig) {
-		if (dig % 2 == 0) {
-			return true;
-		}
-		else
-			return false;
-	}
-	
+		
 	private boolean isOtherVowel(Character c) {
+		c = Character.toUpperCase(c);
 		switch(c) {
 		case 'I':
 		case 'O':
@@ -145,8 +148,9 @@ public class Interpreteter {
 			return false;
 		}
 	}
-	//H, J, K, L, M, N, P, Q, R, S, T, V, X, Z, and usually W and Y.
+//H, J, K, L, M, N, P, Q, R, S, T, V, X, Z, and usually W and Y.
 	private boolean isOtherConsonant(Character c) {
+		c = Character.toUpperCase(c);
 		switch (c) {
 		case 'H':
 		case 'J':
@@ -162,6 +166,14 @@ public class Interpreteter {
 		case 'V':
 		case 'X':
 		case 'Z':
+		case 'A':
+		case 'B':
+		case 'C':
+		case 'D':
+		case 'E':
+		case 'F':
+		case 'G':
+		case ' ':
 			return true;
 		default:
 			return false;
@@ -175,14 +187,6 @@ public class Interpreteter {
 		else {
 			return false;
 		}
-	}
-
-	public String getLastRepresentation() {
-		return lastRepresentation;
-	}
-
-	public void setLastRepresentation(String lastRepresentation) {
-		this.lastRepresentation = lastRepresentation;
 	}
 
 }
