@@ -65,15 +65,12 @@ public class Music {
 		}
 	}
 
-	public void increaseVolume(double valor) {
+	public void increaseVolumeBy(double valor) {
 		if (getVolume() == 0) {
 			setVolume(1);
 		} else if((getVolume() + (int)(getVolume()*valor)) < MAX_VOLUME) {
 			setVolume(getVolume() + (int)(getVolume()*valor));
 		}
-	}
-	public void increaseVolumeByTen() {
-		increaseVolume(0.10);
 	}
 	
 	
@@ -103,8 +100,8 @@ public class Music {
 	}
 	
 	public void changeInstrument(int valor) {
-		if ((instrument + valor) <= MAX_INSTRUMENT) {
-			instrument += valor;
+		if ((getInstrument() + valor) <= MAX_INSTRUMENT) {
+			setInstrument(getInstrument() + valor);
 		}
 	}
 }

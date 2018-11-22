@@ -1,25 +1,29 @@
 package main;
 
-public class Interpreteter {
+public class Interpretador {
 
 	private final Character EXCLAMACAO = '!'; //Trocar instrumento para o instrumento General MIDI #7 (Harpsichord) 
 	private final Character INTERROGACAO = '?';//Aumenta UMA oitava; Se não puder, aumentar, volta à oitava default (de início)
 	private final Character NEW_LINE = '\n';//Trocar instrumento para o instrumento General MIDI #15 (Tubular Bells) 
 	private final Character SEMICOLON = ';'; //Trocar instrumento para o instrumento General MIDI #76 (Pan Flute) 
 	private final Character COMMA = ','; //Trocar instrumento para o instrumento General MIDI #20 (Church Organ)
-	private final Character SPACE = ' ';//Aumenta volume para o DOBRO do volume 
+	private final Character SPACE = ' ';//Aumenta volume para o DOBRO do volume
+	private final Character SILENCE = 'R';
+	
+	private final double TEN_PERCENT = 0.10;
 	
 	private Character currentChar;
 	private Character previousChar;
 	
 	private String ConvertedText;
 	private String textToConvert;
+	private String teste;
 	
-	private Translator translator = new Translator();
+	private Builder builder = new Builder();
 	
 	
-	Interpreteter (String textToConvert){
-		this.ConvertedText = translator.getNoteRepresentation();
+	Interpretador (String textToConvert){
+		this.ConvertedText = builder.getNoteRepresentation();
 		this.textToConvert = textToConvert;
 		this.previousChar = ' ';
 	}
@@ -48,32 +52,28 @@ public class Interpreteter {
 			setCurrentChar(textToConvert.charAt(i));
 			
 			if(isNote(this.currentChar)) {
-				ConvertedText += translator.charToNote(this.currentChar);
+				ConvertedText += builder.charToNote(this.currentChar);
 				setPreviousChar(this.currentChar);
 			}
 			
 			if(Character.isDigit(this.currentChar)) {
-				//TODO: Trocar instrumento para o instrumento General MIDI cujo numero é igual ao valor do instrumento ATUAL + valor do dígito
+				ConvertedText += builder.changeInstrumentByOne(Character.getNumericValue(this.currentChar));
+				setPreviousChar(this.currentChar);
 			}
 			
-			if(isOtherVowel(this.currentChar)) {
-				//TODO: Aumenta o volume em 10%
-				//noteRepresentation = music.DecreaseVolumeByHalf();
-				//setLastRepresentation(ConvertedText);
+			if(isOtherVowel(this.currentChar) && !isNote(this.currentChar)) {
+				ConvertedText += builder.increaseVolumeBy(TEN_PERCENT);
+				setPreviousChar(this.currentChar);
 			}
 			
-			if(isOtherConsonant(this.currentChar)) {
-				/*TODO: Se caractere anterior era
-				* NOTA (A a G), repete nota;
-				* Caso contrário, silêncio ou
-				* pausa
-				*/
+			if(isOtherConsonant(this.currentChar) && !isNote(this.currentChar)) {
 				if(prevIsNote()) {
-					//setLastRepresentation(ConvertedText);
+					ConvertedText += builder.charToNote(this.previousChar);
+					setPreviousChar(this.currentChar);
 				}
 				else {
-					//noteRepresentation = music.Silence();
-				//	setLastRepresentation(ConvertedText);
+					ConvertedText +=builder.charToNote(SILENCE);
+					setPreviousChar(this.currentChar);
 				}
 			}
 			
@@ -143,6 +143,8 @@ public class Interpreteter {
 		case 'I':
 		case 'O':
 		case 'U':
+		case 'A':
+		case 'E':	
 			return true;
 		default:
 			return false;
@@ -166,11 +168,9 @@ public class Interpreteter {
 		case 'V':
 		case 'X':
 		case 'Z':
-		case 'A':
 		case 'B':
 		case 'C':
 		case 'D':
-		case 'E':
 		case 'F':
 		case 'G':
 		case ' ':

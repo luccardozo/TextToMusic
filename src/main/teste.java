@@ -3,7 +3,7 @@ package main;
 public class teste {
 	public static void main(String[] args) {
 	
-		Interpreteter interpretador = new Interpreteter("AAABBC");
+		Interpretador interpretador = new Interpretador("AAA2BBCopCp");
 		String saidaTest;
 		
 		saidaTest = interpretador.Interpreter();
