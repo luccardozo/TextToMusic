@@ -2,7 +2,8 @@ package main;
 
 public class Builder {
 	
-	private final Character SPACE = ' ';
+	private final String SPACE = " ";
+	
 	private String noteRepresentation;
 	
 	Music musica = new Music();
@@ -37,11 +38,24 @@ public class Builder {
 		return getNoteRepresentation();
 	}
 	
-	public String increaseVolumeBy(double tEN_PERCENT) {
-		musica.increaseVolumeBy(tEN_PERCENT);
+	public String changeInstrumetTo(int instrumentValue) {
+		musica.setInstrument(instrumentValue);
+		setNoteRepresentation(instrumentRepresentation() + SPACE);
+		return getNoteRepresentation();
+	}
+	
+	public String increaseVolumeBy(double volume) {
+		musica.increaseVolumeBy(volume);
 		setNoteRepresentation(volumeRepresentation() + SPACE);
 		return getNoteRepresentation();
 	}
+	
+	public String increaseOctave() {
+		musica.increaseOctaveByOne();
+		setNoteRepresentation(SPACE);
+		return getNoteRepresentation();
+	}
+
 	
 	private String octaveRepresentation() {
 		return translate.Octave(musica.getOctave());
@@ -58,7 +72,5 @@ public class Builder {
 	private String volumeRepresentation() {
 		return translate.Volume(musica.getVolume());
 	}
-
-
 
 }

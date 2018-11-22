@@ -11,13 +11,17 @@ public class Interpretador {
 	private final Character SILENCE = 'R';
 	
 	private final double TEN_PERCENT = 0.10;
+	private final double HALF_PERCENT = 0.50;
+	private final int HARPSICHORD = 6;
+	private final int TUBULAR_BELLS = 14;
+	private final int PAN_FLUTE = 75;
+	private final int CHURCH_ORGAN = 19;
 	
 	private Character currentChar;
 	private Character previousChar;
 	
 	private String ConvertedText;
 	private String textToConvert;
-	private String teste;
 	
 	private Builder builder = new Builder();
 	
@@ -78,42 +82,42 @@ public class Interpretador {
 			}
 			
 			if(this.currentChar == EXCLAMACAO) {
-				//TODO: Trocar instrumento para o instrumento General MIDI #7 (Harpsichord) 
+				ConvertedText += builder.changeInstrumetTo(HARPSICHORD);
+				setPreviousChar(this.currentChar);
 			}
 			
 			if(this.currentChar == INTERROGACAO) {
-				//TODO: Aumenta UMA oitava; Se não puder, aumentar, volta à oitava default (de início)
+				ConvertedText += builder.increaseOctave();
+				setPreviousChar(this.currentChar);
 			}
 			
 			if(this.currentChar == NEW_LINE) {
-				//TODO: Trocar instrumento para o instrumento General MIDI #15 (Tubular Bells) 
+				ConvertedText += builder.changeInstrumetTo(TUBULAR_BELLS);
+				setPreviousChar(this.currentChar);
 			}
 			
 			if(this.currentChar == SEMICOLON) {
-				//TODO: Trocar instrumento para o instrumento General MIDI #76 (Pan Flute) 
+				ConvertedText += builder.changeInstrumetTo(PAN_FLUTE);
+				setPreviousChar(this.currentChar);
 			}
 			
 			if(this.currentChar == COMMA) {
-				//TODO: Trocar instrumento para o instrumento General MIDI #20 (Church Organ)
+				ConvertedText += builder.changeInstrumetTo(CHURCH_ORGAN);
+				setPreviousChar(this.currentChar);
 			}
 			
 			if(this.currentChar == SPACE) {
-				//TODO: Aumenta volume para o DOBRO do volume 
+				ConvertedText += builder.increaseVolumeBy(HALF_PERCENT);
+				setPreviousChar(this.currentChar);
 			}
-			
-			//caracter desconhecido
-			else{
-				/*TODO: Se caractere anterior era
-				* NOTA (A a G), repete nota;
-				* Caso contrário, silêncio ou
-				* pausa
-				*/
+			if(isOtherCharacter()) {
 				if(prevIsNote()) {
-				//	setLastRepresentation(ConvertedText);
+					ConvertedText += builder.charToNote(this.previousChar);
+					setPreviousChar(this.currentChar);
 				}
 				else {
-					//noteRepresentation = music.Silence();
-					//setLastRepresentation(ConvertedText);
+					ConvertedText +=builder.charToNote(SILENCE);
+					setPreviousChar(this.currentChar);
 				}
 			}
 		}
@@ -187,6 +191,18 @@ public class Interpretador {
 		else {
 			return false;
 		}
+	}
+	
+	private boolean isOtherCharacter() {
+		return !(this.currentChar == SPACE)
+				&& !(this.currentChar == COMMA)
+				&& !(this.currentChar == SEMICOLON)
+				&& !(this.currentChar == NEW_LINE)
+				&& !(this.currentChar == INTERROGACAO)
+				&& !(this.currentChar == EXCLAMACAO)
+				&& !isOtherConsonant(this.currentChar)
+				&& !isNote(this.currentChar)
+				&& !Character.isDigit(this.currentChar);
 	}
 
 }

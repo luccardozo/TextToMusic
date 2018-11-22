@@ -15,11 +15,6 @@ public class Music {
 	private final int DEFAULT_BPM = 120;
 	private final int DEFAULT_VOLUME = 4000;
 	
-	private final int HARPSICHORD = 6;
-	private final int TUBULAR_BELLS = 14;
-	private final int PAN_FLUTE = 75;
-	private final int CHURCH_ORGAN = 19;
-
 	public Music() {
 		octave = DEFAULT_OCTAVE;
 		instrument = DEFAULT_INSTRUMENT;
@@ -80,22 +75,12 @@ public class Music {
 		}
 	}
 	
-	public void increaseOctave() {
-		if (getOctave() < MAX_OCTAVE) {
-			setOctave(getOctave() + 1);
+	public void increaseOctaveByOne() {
+		if (octave < MAX_OCTAVE) {
+			octave += 1;
 		}
-	}
-	
-	public boolean isOctaveMax() {
-		if(getOctave() == MAX_OCTAVE)
-			return true;
-		else
-			return false;
-	}
-	
-	public void decreaseOctave() {
-		if (getOctave() > 0) {
-			setOctave(getOctave() - 1);
+		else {
+			octave = DEFAULT_OCTAVE;
 		}
 	}
 	
@@ -104,4 +89,5 @@ public class Music {
 			setInstrument(getInstrument() + valor);
 		}
 	}
+
 }
