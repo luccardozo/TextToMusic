@@ -7,7 +7,7 @@ public class Music {
 	private int volume;
 	
 	private final int MAX_VOLUME = 16383;
-	private final int MAX_OCTAVE = 10;
+	private final int MAX_OCTAVE = 9;
 	private final int MAX_INSTRUMENT = 127;
 	
 	private final int DEFAULT_OCTAVE = 0;
